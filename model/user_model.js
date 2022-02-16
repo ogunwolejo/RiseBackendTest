@@ -1,5 +1,5 @@
 /** implementing a user class  */
-
+const { genSaltSync, hashSync } = require("bcryptjs");
 const { PrismaClient, Prisma } = require("@prisma/client");
 
 // using prisma to access the db
@@ -29,12 +29,38 @@ class User {
   }
 
   // hashing the user passwords
-  #hash_password() {
-    
+  hash_password() {
+    // generate a salt, which
+    const salt = genSaltSync(parseInt(process.env.SALT));
+    const hashPassword = hashSync(this.#password, salt);
+    return hashPassword;
   }
 
-  signup_new_user() {
-    return this.#generateUserToken();
+  //add to db
+  async #insert_to_database() {
+    return await prisma.User.create({
+      data: {
+        fullName: this.fullName,
+        lastName: this.lastName,
+        phoneNumber: this.phoneNumber,
+        emailAddress: this.emailAddress,
+        password: this.hash_password(),
+      },
+    });
+  }
+
+  async signup_new_user() {
+    try {
+      const user = await this.#insert_to_database();
+      console.log(user);
+      return {
+        id: user.id,
+        token: this.#generateUserToken(),
+        email: this.emailAddress,
+      }
+    } catch (e) {
+      return e;
+    }
   }
 }
 
