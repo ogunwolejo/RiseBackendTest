@@ -6,7 +6,7 @@ const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 // modules
-const { GenerateUserToken } = require("../utils/jwt");
+const { GenerateUserToken } = require("../middlewares/jwt");
 
 class User {
   fullName;
@@ -56,8 +56,8 @@ class User {
       return {
         id: user.id,
         token: this.#generateUserToken(),
-        email: this.emailAddress,
-      }
+        date: user.createdAt,
+      };
     } catch (e) {
       return e;
     }

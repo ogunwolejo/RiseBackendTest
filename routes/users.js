@@ -3,13 +3,11 @@ const { body } = require("express-validator");
 const { PrismaClient } = require("@prisma/client");
 var router = express.Router();
 
-//model
-//const { User } = require("../model/user_model");
 
 // controllers
 const { signup_user } = require("../controller/user_controller");
 // validation middleware
-const { validate } = require("../utils/validation");
+const { validate } = require("../middlewares/validation");
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {
